@@ -7,7 +7,6 @@
 //
 
 import StORM
-import PerfectLogger
 
 /// Provides select functions as an extension to the main class.
 extension PostgresStORM {
@@ -145,7 +144,6 @@ extension PostgresStORM {
 
 			//return results
 		} catch {
-			LogFile.error("Error msg: \(error)", logFile: "./StORMlog.txt")
 			self.error = StORMError.error("\(error)")
 			throw error
 		}

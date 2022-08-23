@@ -7,7 +7,6 @@
 //
 
 import StORM
-import PerfectLogger
 
 /// An extention ot the main class that provides PostgreSQL-specific "upsert" functionality.
 extension PostgresStORM {
@@ -33,7 +32,6 @@ extension PostgresStORM {
 		do {
 			try exec(str, params: paramsString)
 		} catch {
-			LogFile.error("Error msg: \(error)", logFile: "./StORMlog.txt")
 			self.error = StORMError.error("\(error)")
 			throw error
 		}

@@ -8,7 +8,6 @@
 
 import StORM
 import PerfectPostgreSQL
-import PerfectLogger
 
 /// PostgresConnector sets the connection parameters for the PostgreSQL Server access
 /// Usage:
@@ -47,7 +46,6 @@ open class PostgresStORM: StORM, StORMProtocol {
 	}
 
 	private func printDebug(_ statement: String, _ params: [String]) {
-		if StORMdebug { LogFile.debug("StORM Debug: \(statement) : \(params.joined(separator: ", "))", logFile: "./StORMlog.txt") }
 	}
 
 	// Internal function which executes statements, with parameter binding
@@ -74,7 +72,6 @@ open class PostgresStORM: StORM, StORMProtocol {
 
 		// set exec message
 		errorMsg = thisConnection.server.errorMessage().trimmingCharacters(in: .whitespacesAndNewlines)
-		if StORMdebug { LogFile.info("Error msg: \(errorMsg)", logFile: "./StORMlog.txt") }
 		if isError() {
 			thisConnection.server.close()
 			throw StORMError.error(errorMsg)
@@ -107,7 +104,6 @@ open class PostgresStORM: StORM, StORMProtocol {
 
 		// set exec message
 		errorMsg = thisConnection.server.errorMessage().trimmingCharacters(in: .whitespacesAndNewlines)
-		if StORMdebug { LogFile.info("Error msg: \(errorMsg)", logFile: "./StORMlog.txt") }
 		if isError() {
 			thisConnection.server.close()
 			throw StORMError.error(errorMsg)
@@ -163,7 +159,6 @@ open class PostgresStORM: StORM, StORMProtocol {
 				try update(data: asData(1), idName: idname, idValue: idval)
 			}
 		} catch {
-			LogFile.error("Error: \(error)", logFile: "./StORMlog.txt")
 			throw StORMError.error("\(error)")
 		}
 	}
@@ -184,7 +179,6 @@ open class PostgresStORM: StORM, StORMProtocol {
 				try update(data: asData(1), idName: idname, idValue: idval)
 			}
 		} catch {
-			LogFile.error("Error: \(error)", logFile: "./StORMlog.txt")
 			throw StORMError.error("\(error)")
 		}
 	}
@@ -195,7 +189,6 @@ open class PostgresStORM: StORM, StORMProtocol {
 		do {
 			try insert(asData())
 		} catch {
-			LogFile.error("Error: \(error)", logFile: "./StORMlog.txt")
 			throw StORMError.error("\(error)")
 		}
 	}
@@ -211,7 +204,6 @@ open class PostgresStORM: StORM, StORMProtocol {
 	/// Requires the connection to be configured, as well as a valid "table" property to have been set in the class
 
 	open func setup(_ str: String = "") throws {
-		LogFile.info("Running setup: \(table())", logFile: "./StORMlog.txt")
 		var createStatement = str
 		if str.count == 0 {
 			var opt = [String]()
@@ -251,13 +243,11 @@ open class PostgresStORM: StORM, StORMProtocol {
 			let keyComponent = ", CONSTRAINT \(table())_key PRIMARY KEY (\(keyName)) NOT DEFERRABLE INITIALLY IMMEDIATE"
 
 			createStatement = "CREATE TABLE IF NOT EXISTS \(table()) (\(opt.joined(separator: ", "))\(keyComponent));"
-			if StORMdebug { LogFile.info("createStatement: \(createStatement)", logFile: "./StORMlog.txt") }
 
 		}
 		do {
 			try sql(createStatement, params: [])
 		} catch {
-			LogFile.error("Error msg: \(error)", logFile: "./StORMlog.txt")
 			throw StORMError.error("\(error)")
 		}
 	}
